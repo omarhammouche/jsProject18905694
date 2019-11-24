@@ -9,10 +9,13 @@ class MVC {
 		/** @export */this.model = model || new Model();
 		/** @export */this.view = view || undefined;
 		/** @export */this.controller = controller || new Controller();
-		
-		this.model.initialize(this);
-		this.view.initialize(this);
-		this.controller.initialize(this);
+	}
+	
+	async initialize() {
+		trace("init MVC");
+		await this.model.initialize(this);
+		await this.view.initialize(this);
+		await this.controller.initialize(this);
 	}
 	
 }
@@ -51,7 +54,7 @@ class Model extends ModelBase {
 class ViewBase {
 	
 	constructor() {
-		//trace("construct view :", name, bounds);
+		//console.log("construct view :", name, bounds);
 		/** @export */this.name = undefined;
 		/** @export */this.mvc = null;
 		/** @export */this.parent = null;
@@ -61,7 +64,7 @@ class ViewBase {
 		this.activated = false;
 	}
 	
-	initialize(mvc) {
+	async initialize(mvc) {
 		this.mvc = mvc;
 		this.name = this.mvc.name + "-view";
 		this.create();
@@ -69,12 +72,13 @@ class ViewBase {
 	
 	create() {
 		trace("create", this.name);
-		this.stage = HH.create("div");
-		SS.style(this.stage, {"position": "absolute", "left": "0px", "top": "0px", "width": "100%", "height": "100%"});
-		//this.stage.style.boxSizing = "border-box";
-		//this.stage.style.overflowX = "hidden";
-		//this.stage.style.overflowY = "hidden";
-		HH.attr(this.stage, {"name": "view-" + this.name});
+		this.stage = document.createElement("div");
+		this.stage.style.position = "absolute";
+		this.stage.style.left = "0px";
+		this.stage.style.top = "0px";
+		this.stage.style.width = "100%";
+		this.stage.style.height ="100%";
+		this.stage.setAttribute("name", "view-" + this.name);
 		this._rect = null;
 		this.draw();
 	}

@@ -10,7 +10,7 @@ class Comm {
      * @param {Object} options: 
      */
 	static async request(url, options) {
-		options = merge({"method": "GET", "headers": {}, "body": undefined, "mode": "cors", "credentials": "same-origin", "progress": () => {}, "type": "json"}, options);
+		options = merge({"method": "GET", "headers": {}, "body": undefined, "mode": "cors", "credentials": "same-origin", "progress": die, "type": "json"}, options);
 		//trace("request", options);
 		let result = await fetch(url, /** @type {(!RequestInit|undefined)} */(options));
 		result["response"] = await result[options["type"]]();

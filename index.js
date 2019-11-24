@@ -1,6 +1,7 @@
 // user modules
 const Connect = 	require("connect"); 	// middlewares
 const MimeTypes = 	require("mime-types"); 	// mime types
+const SocketIO = 	require("socket.io");	// socket.io
 
 // native modules
 const http = 		require("http"); 		// http server
@@ -28,6 +29,15 @@ class Server {
 	constructor() {
 		this._port = 80; // http port
 		trace("start http", this._port);
+		
+		this._connect = Connect(); // connect instance
+		this._connect.use(this.handle.bind(this)); // handle request
+		this._connect.use(this.serve.bind(this)); // check request is file
+		this._connect.use(this.unhandled.bind(this)); // unhandled request
+
+		this._server = http.createServer(this._connect).listen(this._port); // start http server
+
+		this._io = SocketIO.listen(this._server);
 
 		this._app = new App(this, new Map()); // load app
 
@@ -39,13 +49,6 @@ class Server {
 		}, new Map()); // init with empty map
 
 		console.log("routes :", [...this._routes.keys()]); // say my name
-		
-		this._connect = Connect(); // connect instance
-		this._connect.use(this.handle.bind(this)); // handle request
-		this._connect.use(this.serve.bind(this)); // check request is file
-		this._connect.use(this.unhandled.bind(this)); // unhandled request
-
-		this._server = http.createServer(this._connect).listen(this._port); // start http server
 	}
 
 	handle(req, res, next) { // handle request
