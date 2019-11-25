@@ -37,7 +37,7 @@ class Server {
 
 		this._server = http.createServer(this._connect).listen(this._port); // start http server
 
-		this._io = SocketIO.listen(this._server);
+		this._io = SocketIO(this._server);
 
 		this._app = new App(this, new Map()); // load app
 
@@ -79,7 +79,7 @@ class Server {
 					res.writeHead(200, { // send file
 						"Content-Type": filemime, // with mime type in headers
 						"Cache-Control": "no-cache" // and no cache
-					}).write(file, "binary"); //write binary data
+					}).write(file, "binary"); // write binary data to response
 					res.end(); // done
 				});
 			});

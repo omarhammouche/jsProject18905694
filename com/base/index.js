@@ -14,8 +14,8 @@ class ModuleBase {
         console.log("start", this._name);
         if(this.settings("io")) {
             this._clients = new Map();
-            this._io = this._app.io.of(this._name);
-            this._io.on("connection", this.onIOConnect.bind(this));
+            this._io = this._app._io.of(this._name);
+            this._io.on("connection", this._onIOConnect.bind(this));
         }
     }
 
@@ -93,18 +93,17 @@ class ModuleBase {
      * 
      * @param {Socket} socket : 
      */
-    onIOConnect(socket) {
+    _onIOConnect(socket) {
         trace("io connect", this._name);
         this._clients.set(socket.id, socket);
-        socket.use((packet, next) => this._app.check.packet(socket, packet, next));
-        socket.on("disconnect", this.onIODisconnect.bind(this));
+        socket.on("disconnect", this._onIODisconnect.bind(this));
     }
 
     /**
      * 
      * @param {Socket} socket : 
      */
-    onIODisconnect(socket) {
+    _onIODisconnect(socket) {
         trace("io disconnect", this._name);
         this._clients.delete(socket.id);
     }
